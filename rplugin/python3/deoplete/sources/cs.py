@@ -45,8 +45,12 @@ class Source(Base):
         req = urllib.request.Request(
             url, data, headers={'Content-Type': 'application/json; charset=UTF-8'},
             method='POST')
-        with urllib.request.urlopen(req) as f:
-            r = str(f.read(), 'utf-8')
+        try:
+            with urllib.request.urlopen(req) as f:
+                r = str(f.read(), 'utf-8')
+        except Exception as ex:
+            r = None
+            self.vim.command('echomsg "{}"'.format(ex))
 
         if r is None or len(r) == 0:
             return []
