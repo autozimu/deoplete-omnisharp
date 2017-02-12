@@ -17,13 +17,15 @@ class Source(Base):
         self.input_pattern = '\.\w*'
         self.is_bytepos = True
 
+    def on_init(self, context):
+        self.__url = "{}/autocomplete".format(
+                self.vim.vars["OmniSharp_host"])
+
     def get_complete_position(self, context):
         m = re.search(r'\w*$', context['input'])
         return m.start() if m else -1
 
     def gather_candidates(self, context):
-        host = self.vim.eval('g:OmniSharp_host')
-        url = "%s/autocomplete" % host
         cur = self.vim.current
         win = cur.window
         cursor = win.cursor
@@ -43,7 +45,7 @@ class Source(Base):
         data = bytes(json.dumps(params), 'utf-8')
 
         req = urllib.request.Request(
-            url, data, headers={'Content-Type': 'application/json; charset=UTF-8'},
+            self.__url, data, headers={'Content-Type': 'application/json; charset=UTF-8'},
             method='POST')
         try:
             with urllib.request.urlopen(req) as f:
