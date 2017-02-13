@@ -4,7 +4,7 @@ import urllib
 import urllib.request
 import urllib.parse
 from .base import Base
-from deoplete.util import get_simple_buffer_config, error
+
 
 class Source(Base):
     def __init__(self, vim):
@@ -77,5 +77,3 @@ class Source(Base):
                 dup=1))
 
         return completions
-
-
