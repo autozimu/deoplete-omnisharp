@@ -18,14 +18,20 @@ class Source(Base):
         self.is_bytepos = True
 
     def on_init(self, context):
-        self.__url = "{}/autocomplete".format(
-                self.vim.vars["OmniSharp_host"])
+        host = self.vim.eval("get(g:, 'OmniSharp_host')")
+        if host:
+            self.__url = "{}/autocomplete".format(host)
+        else:
+            self.__url = None
 
     def get_complete_position(self, context):
         m = re.search(r'\w*$', context['input'])
         return m.start() if m else -1
 
     def gather_candidates(self, context):
+        if self.__url is None:
+            return []
+
         cur = self.vim.current
         win = cur.window
         cursor = win.cursor
